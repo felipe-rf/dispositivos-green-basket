@@ -3,6 +3,7 @@ import { Asset } from "expo-asset";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import { Navigation } from "./navigation";
+import { useTheme } from "react-native-paper";
 
 Asset.loadAsync([
   ...NavigationAssets,
@@ -13,6 +14,9 @@ Asset.loadAsync([
 SplashScreen.preventAutoHideAsync();
 
 export function App() {
+  const theme = useTheme();
+  theme.dark = false;
+
   return (
     <Navigation
       linking={{
