@@ -13,6 +13,7 @@ import { Profile } from "./screens/Profile";
 import { Settings } from "./screens/Settings";
 import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
+import { Login } from "./screens/Login";
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -52,6 +53,12 @@ const HomeTabs = createBottomTabNavigator({
 
 const RootStack = createNativeStackNavigator({
   screens: {
+    Login: {
+      screen: Login,
+      options: {
+        headerShown: false,
+      },
+    },
     HomeTabs: {
       screen: HomeTabs,
       options: {
@@ -94,7 +101,10 @@ const RootStack = createNativeStackNavigator({
   },
 });
 
-export const Navigation = createStaticNavigation(RootStack);
+// Create the navigation with Login as the initial screen
+export const Navigation = createStaticNavigation(RootStack, {
+  initialRouteName: "Login",
+});
 
 type RootStackParamList = StaticParamList<typeof RootStack>;
 
