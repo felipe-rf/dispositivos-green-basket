@@ -105,6 +105,7 @@ export function App() {
               HomeTabs: "home",
               Profile: ":user",
               Settings: "settings",
+              SellerProfile: "seller/:user",
               NotFound: "*",
             },
           },

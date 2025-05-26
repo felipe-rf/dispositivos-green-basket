@@ -1,15 +1,27 @@
-import { Button, Text } from "@react-navigation/elements";
+import { Button } from "@react-navigation/elements";
 import { StyleSheet, View } from "react-native";
 
 export function Home() {
   return (
     <View style={styles.container}>
-      <Text>Home Screen</Text>
-      <Text>Open up 'src/App.tsx' to start working on your app!</Text>
       <Button screen="Profile" params={{ user: "jane" }}>
-        Go to Profile
+        Perfil usuário
       </Button>
-      <Button screen="Settings">Go to Settings</Button>
+      <Button screen="SellerProfile" params={{ user: "john" }}>
+        Perfil vendedor
+      </Button>
+      {/*  faq*/}
+      <Button screen="FAQ">FAQ</Button>
+      {/*    Carrinho*/}
+      <Button screen="Cart">Carrinho</Button>
+      {/*  Catalogo*/}
+      <Button screen="Catalog">Catálogo</Button>
+      {/*    pedidos */}
+      <Button screen="Orders">Pedidos</Button>
+      {/*Receitas*/}
+      <Button screen="Recipes">Receitas</Button>
+      {/*    Finalizar Pedido */}
+      <Button screen="Checkout">Finalizar Pedido</Button>
     </View>
   );
 }

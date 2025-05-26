@@ -10,6 +10,7 @@ import bell from "../assets/bell.png";
 import newspaper from "../assets/newspaper.png";
 import { Home } from "./screens/Home";
 import { Profile } from "./screens/Profile";
+import { SellerProfile } from "./screens/SellerProfile";
 import { Settings } from "./screens/Settings";
 import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
@@ -68,8 +69,26 @@ const RootStack = createNativeStackNavigator({
     },
     Profile: {
       screen: Profile,
+      options: ({ route }) => ({
+        title: `Perfil: ${route.params.user}`,
+      }),
       linking: {
         path: ":user(@[a-zA-Z0-9-_]+)",
+        parse: {
+          user: (value) => value.replace(/^@/, ""),
+        },
+        stringify: {
+          user: (value) => `@${value}`,
+        },
+      },
+    },
+    SellerProfile: {
+      screen: SellerProfile,
+      options: ({ route }) => ({
+        title: `Vendedor: ${route.params.user}`,
+      }),
+      linking: {
+        path: "seller/:user(@[a-zA-Z0-9-_]+)",
         parse: {
           user: (value) => value.replace(/^@/, ""),
         },
@@ -89,6 +108,7 @@ const RootStack = createNativeStackNavigator({
         ),
       }),
     },
+
     NotFound: {
       screen: NotFound,
       options: {
