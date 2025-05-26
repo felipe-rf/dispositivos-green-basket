@@ -101,7 +101,6 @@ const RootStack = createNativeStackNavigator({
   },
 });
 
-// Create the navigation with Login as the initial screen
 export const Navigation = createStaticNavigation(RootStack, {
   initialRouteName: "Login",
 });
