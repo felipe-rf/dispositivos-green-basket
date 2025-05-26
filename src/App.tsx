@@ -101,8 +101,8 @@ export function App() {
           prefixes: ["helloworld://"],
           config: {
             screens: {
-              Login: "login",
               HomeTabs: "home",
+              Login: "login",
               Profile: ":user",
               Settings: "settings",
               SellerProfile: "seller/:user",

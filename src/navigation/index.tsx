@@ -18,6 +18,7 @@ import { Login } from "./screens/Login";
 import { FAQ } from "./screens/FAQ";
 import { Catalog } from "./screens/Catalog";
 import { Cart } from "./screens/Cart";
+import { Orders } from "./screens/Orders";
 import { Avatar, IconButton } from "react-native-paper";
 
 const HomeTabs = createBottomTabNavigator({
@@ -92,22 +93,28 @@ const RootStack = createNativeStackNavigator({
           icon="cart-outline"
           iconColor="#fff"
           size={28}
-          onPress={() => navigation.navigate('Cart')}
+          onPress={() => navigation.navigate("Cart")}
+        />
+        <IconButton
+          icon="package-variant"
+          iconColor="#fff"
+          size={28}
+          onPress={() => navigation.navigate("Orders")}
         />
       </>
     ),
   },
   screens: {
-    Login: {
-      screen: Login,
-      options: {
-        headerShown: false,
-      },
-    },
     HomeTabs: {
       screen: HomeTabs,
       options: {
         title: "Home",
+        headerShown: false,
+      },
+    },
+    Login: {
+      screen: Login,
+      options: {
         headerShown: false,
       },
     },
@@ -129,7 +136,7 @@ const RootStack = createNativeStackNavigator({
     SellerProfile: {
       screen: SellerProfile,
       options: ({ route }) => ({
-        title: `Vendedor: ${route.params.user}`,
+        title: `Vendedor: {route.params.user}`,
       }),
       linking: {
         path: "seller/:user(@[a-zA-Z0-9-_]+)",
@@ -170,6 +177,12 @@ const RootStack = createNativeStackNavigator({
         title: "Carrinho",
       },
     },
+    Orders: {
+      screen: Orders,
+      options: {
+        title: "Meus Pedidos",
+      },
+    },
     NotFound: {
       screen: NotFound,
       options: {
@@ -183,7 +196,7 @@ const RootStack = createNativeStackNavigator({
 });
 
 export const Navigation = createStaticNavigation(RootStack, {
-  initialRouteName: "Login",
+  initialRouteName: "Home",
 });
 
 type RootStackParamList = StaticParamList<typeof RootStack>;
