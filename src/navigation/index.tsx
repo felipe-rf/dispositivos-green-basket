@@ -16,6 +16,8 @@ import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
 import { Login } from "./screens/Login";
 import { FAQ } from "./screens/FAQ";
+import { Catalog } from "./screens/Catalog";
+import { Avatar, IconButton } from "react-native-paper";
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -54,6 +56,46 @@ const HomeTabs = createBottomTabNavigator({
 });
 
 const RootStack = createNativeStackNavigator({
+  screenOptions: {
+    headerStyle: {
+      backgroundColor: "#4CCE88",
+      shadowColor: "transparent",
+      elevation: 0,
+      borderBottomWidth: 0,
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "bold",
+    },
+    headerLeft: () => (
+      <Avatar.Icon
+        size={40}
+        icon="account"
+        style={{
+          color: "#fff",
+          backgroundColor: "#fff",
+          marginLeft: 10,
+          marginRight: 10,
+        }}
+      />
+    ),
+    headerRight: () => (
+      <>
+        <IconButton
+          icon="magnify"
+          iconColor="#fff"
+          size={28}
+          onPress={() => {}}
+        />
+        <IconButton
+          icon="cart-outline"
+          iconColor="#fff"
+          size={28}
+          onPress={() => {}}
+        />
+      </>
+    ),
+  },
   screens: {
     Login: {
       screen: Login,
@@ -113,6 +155,12 @@ const RootStack = createNativeStackNavigator({
       screen: FAQ,
       options: {
         title: "Perguntas Frequentes",
+      },
+    },
+    Catalog: {
+      screen: Catalog,
+      options: {
+        title: "Catálogo de Produtos",
       },
     },
     NotFound: {

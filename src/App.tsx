@@ -27,7 +27,7 @@ const customTheme = {
     onPrimaryContainer: "rgb(46, 0, 77)",
     secondary: "#006d3f",
     onSecondary: "rgb(255, 255, 255)",
-    secondaryContainer: "rgb(123, 251, 176)",
+    secondaryContainer: "#4CCE88",
     onSecondaryContainer: "rgb(0, 33, 16)",
     tertiary: "rgb(129, 81, 85)",
     onTertiary: "rgb(255, 255, 255)",
