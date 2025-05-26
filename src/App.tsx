@@ -109,6 +109,7 @@ export function App() {
               FAQ: "faq",
               Cart: "cart",
               Recipes: "recipes",
+              Checkout: "checkout",
               NotFound: "*",
             },
           },

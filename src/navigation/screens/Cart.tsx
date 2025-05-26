@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -38,6 +39,7 @@ const initialCartItems = [
 ];
 
 export function Cart() {
+  const navigation = useNavigation();
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
   const [cartItems, setCartItems] = useState(initialCartItems);
@@ -261,7 +263,7 @@ export function Cart() {
           <Button
             mode="contained"
             style={styles.confirmButton}
-            onPress={showModal}
+            onPress={() => navigation.navigate("Checkout")}
           >
             Finalizar compra
           </Button>

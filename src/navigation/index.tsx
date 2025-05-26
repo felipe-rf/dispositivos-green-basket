@@ -21,6 +21,7 @@ import { Cart } from "./screens/Cart";
 import { Orders } from "./screens/Orders";
 import { Recipes } from "./screens/Recipes";
 import { Avatar, IconButton } from "react-native-paper";
+import { Checkout } from "./screens/Checkout";
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -65,6 +66,13 @@ const RootStack = createNativeStackNavigator({
       shadowColor: "transparent",
       elevation: 0,
       borderBottomWidth: 0,
+      borderBottomColor: "transparent",
+      shadowOpacity: 0,
+      shadowOffset: {
+        width: 0,
+        height: 0,
+      },
+      shadowRadius: 0,
     },
     headerTintColor: "#fff",
     headerTitleStyle: {
@@ -196,6 +204,12 @@ const RootStack = createNativeStackNavigator({
             onPress={() => console.log("Favorite toggled")}
           />
         ),
+      },
+    },
+    Checkout: {
+      screen: Checkout,
+      options: {
+        title: "Finalizar Pedido",
       },
     },
     NotFound: {
