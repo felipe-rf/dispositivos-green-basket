@@ -106,6 +106,7 @@ export function App() {
               Profile: ":user",
               Settings: "settings",
               SellerProfile: "seller/:user",
+              FAQ: "faq",
               NotFound: "*",
             },
           },

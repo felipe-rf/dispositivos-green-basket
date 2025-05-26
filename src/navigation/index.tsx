@@ -15,6 +15,7 @@ import { Settings } from "./screens/Settings";
 import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
 import { Login } from "./screens/Login";
+import { FAQ } from "./screens/FAQ";
 
 const HomeTabs = createBottomTabNavigator({
   screens: {
@@ -108,7 +109,12 @@ const RootStack = createNativeStackNavigator({
         ),
       }),
     },
-
+    FAQ: {
+      screen: FAQ,
+      options: {
+        title: "Perguntas Frequentes",
+      },
+    },
     NotFound: {
       screen: NotFound,
       options: {
