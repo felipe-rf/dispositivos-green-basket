@@ -17,6 +17,7 @@ import { NotFound } from "./screens/NotFound";
 import { Login } from "./screens/Login";
 import { FAQ } from "./screens/FAQ";
 import { Catalog } from "./screens/Catalog";
+import { Cart } from "./screens/Cart";
 import { Avatar, IconButton } from "react-native-paper";
 
 const HomeTabs = createBottomTabNavigator({
@@ -79,7 +80,7 @@ const RootStack = createNativeStackNavigator({
         }}
       />
     ),
-    headerRight: () => (
+    headerRight: ({ navigation }) => (
       <>
         <IconButton
           icon="magnify"
@@ -91,7 +92,7 @@ const RootStack = createNativeStackNavigator({
           icon="cart-outline"
           iconColor="#fff"
           size={28}
-          onPress={() => {}}
+          onPress={() => navigation.navigate('Cart')}
         />
       </>
     ),
@@ -161,6 +162,12 @@ const RootStack = createNativeStackNavigator({
       screen: Catalog,
       options: {
         title: "Catálogo de Produtos",
+      },
+    },
+    Cart: {
+      screen: Cart,
+      options: {
+        title: "Carrinho",
       },
     },
     NotFound: {
