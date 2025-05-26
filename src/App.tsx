@@ -108,6 +108,7 @@ export function App() {
               SellerProfile: "seller/:user",
               FAQ: "faq",
               Cart: "cart",
+              Recipes: "recipes",
               NotFound: "*",
             },
           },

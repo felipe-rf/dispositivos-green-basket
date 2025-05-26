@@ -19,6 +19,7 @@ import { FAQ } from "./screens/FAQ";
 import { Catalog } from "./screens/Catalog";
 import { Cart } from "./screens/Cart";
 import { Orders } from "./screens/Orders";
+import { Recipes } from "./screens/Recipes";
 import { Avatar, IconButton } from "react-native-paper";
 
 const HomeTabs = createBottomTabNavigator({
@@ -181,6 +182,20 @@ const RootStack = createNativeStackNavigator({
       screen: Orders,
       options: {
         title: "Meus Pedidos",
+      },
+    },
+    Recipes: {
+      screen: Recipes,
+      options: {
+        title: "Receitas",
+        headerRight: ({ navigation }) => (
+          <IconButton
+            icon="heart-outline"
+            iconColor="#fff"
+            size={28}
+            onPress={() => console.log("Favorite toggled")}
+          />
+        ),
       },
     },
     NotFound: {
