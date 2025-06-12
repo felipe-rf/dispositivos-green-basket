@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import {
   Avatar,
@@ -11,118 +11,34 @@ import {
   Portal,
   Modal,
   IconButton,
+  ActivityIndicator,
 } from "react-native-paper";
+import { db } from "../../firebaseConfig";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { updateDoc } from "firebase/firestore";
 
-// Custom Rating component
-interface RatingProps {
+// Simple Rating component for displaying and selecting ratings
+type RatingProps = {
   value: number;
-  maxStars?: number;
-  size?: number;
-  onChange?: (rating: number) => void;
-}
+  onChange?: (value: number) => void;
+};
 
-const Rating = ({ value, maxStars = 5, size = 24, onChange }: RatingProps) => {
-  const theme = useTheme();
-
-  const handlePress = (rating: number) => {
-    if (onChange) {
-      onChange(rating);
-    }
-  };
-
+const Rating: React.FC<RatingProps> = ({ value, onChange }) => {
+  const stars = [1, 2, 3, 4, 5];
   return (
-    <View style={{ flexDirection: 'row' }}>
-      {[...Array(maxStars)].map((_, index) => {
-        const starIndex = index + 1;
-        return (
-          <TouchableOpacity
-            key={index}
-            onPress={() => handlePress(starIndex)}
-            disabled={!onChange}
-          >
-            <IconButton
-              icon={starIndex <= value ? "star" : "star-outline"}
-              iconColor={starIndex <= value ? "#FFD700" : theme.colors.onSurfaceVariant}
-              size={size}
-              style={{ margin: -4 }}
-            />
-          </TouchableOpacity>
-        );
-      })}
+    <View style={{ flexDirection: "row" }}>
+      {stars.map((star) => (
+        <IconButton
+          key={star}
+          icon={star <= value ? "star" : "star-outline"}
+          size={28}
+          onPress={onChange ? () => onChange(star) : undefined}
+          disabled={!onChange}
+        />
+      ))}
     </View>
   );
 };
-
-// Mock orders data - in a real app, this would come from an API or state management
-const ordersData = [
-  {
-    id: "1001",
-    date: "15/05/2023",
-    deliveryDate: "20/05/2023",
-    value: 56.30,
-    status: "Entregue",
-    items: [
-      {
-        id: "p1",
-        name: "Produto 1",
-        price: 18.90,
-        quantity: 2,
-        image: "https://picsum.photos/seed/green/200/300",
-      },
-      {
-        id: "p2",
-        name: "Produto 2",
-        price: 18.50,
-        quantity: 1,
-        image: "https://picsum.photos/seed/basket/200/300",
-      }
-    ],
-    rated: false,
-  },
-  {
-    id: "1002",
-    date: "10/05/2023",
-    deliveryDate: "15/05/2023",
-    value: 37.25,
-    status: "Entregue",
-    items: [
-      {
-        id: "p3",
-        name: "Produto 3",
-        price: 12.75,
-        quantity: 1,
-        image: "https://picsum.photos/seed/2025/200/300",
-      },
-      {
-        id: "p4",
-        name: "Produto 4",
-        price: 24.50,
-        quantity: 1,
-        image: "https://picsum.photos/seed/ayy/200/300",
-      }
-    ],
-    rated: true,
-    rating: 4,
-  },
-  {
-    id: "1003",
-    date: "05/05/2023",
-    deliveryDate: "10/05/2023",
-    value: 75.80,
-    status: "Entregue",
-    items: [
-      {
-        id: "p5",
-        name: "Produto 5",
-        price: 25.30,
-        quantity: 3,
-        image: "https://picsum.photos/seed/lmao/200/300",
-      }
-    ],
-    rated: true,
-    rating: 5,
-  }
-];
 
 export function Orders() {
   const theme = useTheme();
@@ -130,36 +46,81 @@ export function Orders() {
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(null);
   const [rating, setRating] = useState(0);
-  const [orders, setOrders] = useState(ordersData);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return `R$ ${value.toFixed(2).replace(".", ",")}`;
-  };
+  const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace(".", ",")}`;
 
-  const handleAccordionToggle = (id: string) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const pedidosSnapshot = await getDocs(collection(db, "pedidos"));
+        const produtosSnapshot = await getDocs(collection(db, "produtos"));
 
-  const openRatingModal = (orderId: string) => {
-    setCurrentOrderId(orderId);
-    setRating(0);
-    setRatingModalVisible(true);
-  };
+        const produtosMap: Record<string, any> = {};
+        produtosSnapshot.forEach((doc) => {
+          produtosMap[doc.id] = doc.data();
+        });
 
-  const submitRating = () => {
-    if (currentOrderId && rating > 0) {
+        const formattedOrders = await Promise.all(
+          pedidosSnapshot.docs.map(async (pedidoDoc) => {
+            const pedido = pedidoDoc.data();
+            const items = pedido.produtos.map((p: any) => {
+              const produtoInfo = produtosMap[p.id] || {};
+              return {
+                id: p.id,
+                name: produtoInfo.nome || "Produto",
+                price: produtoInfo.valor || 0,
+                quantity: p.quantidade,
+                image: produtoInfo.foto || "https://via.placeholder.com/200",
+              };
+            });
+
+            const totalValue = items.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+
+            return {
+              id: pedidoDoc.id,
+              date: new Date(pedido.data).toLocaleDateString(),
+              deliveryDate: "N/A", // optional enhancement
+              value: totalValue,
+              items,
+              rated: !!pedido.avaliacao,
+              rating: pedido.avaliacao || 0,
+            };
+          })
+        );
+
+        setOrders(formattedOrders);
+      } catch (error) {
+        console.error("Erro ao buscar pedidos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+
+const submitRating = async () => {
+  if (currentOrderId && rating > 0) {
+    try {
+      await updateDoc(doc(db, "pedidos", currentOrderId), {
+        avaliacao: rating,
+      });
       setOrders(
         orders.map((order) =>
-          order.id === currentOrderId
-            ? { ...order, rated: true, rating }
-            : order
+          order.id === currentOrderId ? { ...order, rated: true, rating } : order
         )
       );
-      setRatingModalVisible(false);
+    } catch (error) {
+      console.error("Erro ao salvar avaliação:", error);
     }
-  };
+    setRatingModalVisible(false);
+  }
+};
 
+  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -271,10 +232,35 @@ export function Orders() {
     },
   });
 
+  const handleAccordionToggle = (orderId: string) => {
+    setExpandedId(expandedId === orderId ? null : orderId);
+  };
+
+  const openRatingModal = (orderId: string) => {
+    setCurrentOrderId(orderId);
+    setRating(0);
+    setRatingModalVisible(true);
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator animating size="large" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        {orders.map((order) => (
+          {orders.length === 0 ? (
+    <View style={{ alignItems: "center", marginTop: 50 }}>
+      <Text variant="titleMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+        Nenhum pedido encontrado.
+      </Text>
+    </View>
+  ) : (
+        orders.map((order) => (
           <Card key={order.id} style={styles.orderCard}>
             <Card.Content>
               <View style={styles.cardContent}>
@@ -298,7 +284,13 @@ export function Orders() {
               onPress={() => handleAccordionToggle(order.id)}
             >
               <View style={styles.accordionContent}>
-                {order.items.map((item) => (
+                {order.items.map((item: {
+                  id: string;
+                  name: string;
+                  price: number;
+                  quantity: number;
+                  image: string;
+                }) => (
                   <View key={item.id} style={styles.itemRow}>
                     <Avatar.Image
                       size={40}
@@ -335,9 +327,9 @@ export function Orders() {
               </View>
             </List.Accordion>
           </Card>
-        ))}
+        )))}
       </ScrollView>
-
+        
       <Portal>
         <Modal
           visible={ratingModalVisible}

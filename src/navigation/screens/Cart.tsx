@@ -12,64 +12,31 @@ import {
   Text,
   useTheme,
 } from "react-native-paper"; // Mock cart data - in a real app, this would come from a state management solution
-
-// Mock cart data - in a real app, this would come from a state management solution
-const initialCartItems = [
-  {
-    id: "p1",
-    name: "Produto 1",
-    price: 18.9,
-    quantity: 2,
-    image: "https://picsum.photos/seed/green/200/300",
-  },
-  {
-    id: "p2",
-    name: "Produto 2",
-    price: 24.5,
-    quantity: 1,
-    image: "https://picsum.photos/seed/basket/200/300",
-  },
-  {
-    id: "p3",
-    name: "Produto 3",
-    price: 12.75,
-    quantity: 3,
-    image: "https://picsum.photos/seed/2025/200/300",
-  },
-];
+import { useCart } from "../../contexts/CartContext";
 
 export function Cart() {
   const navigation = useNavigation();
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
-  const [cartItems, setCartItems] = useState(initialCartItems);
-
+  const { cartItems, updateItemQuantity } = useCart();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
   // Functions to handle quantity changes
   const incrementQuantity = (id: string) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    );
+    const item = cartItems.find((i) => i.id === id);
+    if (item) updateItemQuantity(id, item.quantity + 1);
   };
 
   const decrementQuantity = (id: string) => {
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      ),
-    );
+    const item = cartItems.find((i) => i.id === id);
+    if (item && item.quantity > 1) updateItemQuantity(id, item.quantity - 1);
   };
 
   // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0,
+    0
   );
   const shippingCost = 10.0; // Fixed shipping cost for this example
   const total = subtotal + shippingCost;

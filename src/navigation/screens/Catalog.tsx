@@ -1,90 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useCart } from "../../contexts/CartContext"; // Adjust path if necessary
+import { Button } from "react-native-paper"; // Using react-native-paper button
+
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Card, FAB, Text, useTheme } from "react-native-paper";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
-const categoriesData = [
-  {
-    id: "cat1",
-    name: "Categoria",
-    products: [
-      {
-        id: "p1",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/green/200/300",
-      },
-      {
-        id: "p2",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/basket/200/300",
-      },
-      {
-        id: "p3",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/2025/200/300",
-      },
-      {
-        id: "p4",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/ayy/200/300",
-      },
-    ],
-  },
-  {
-    id: "cat2",
-    name: "Categoria",
-    products: [
-      {
-        id: "p5",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/lmao/200/300",
-      },
-      {
-        id: "p6",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/new/200/300",
-      },
-      {
-        id: "p7",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/prod/200/300",
-      },
-    ],
-  },
-  {
-    id: "cat3",
-    name: "Categoria",
-    products: [
-      {
-        id: "p8",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/cat3/200/300",
-      },
-      {
-        id: "p9",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/v2/200/300",
-      },
-      {
-        id: "p10",
-        name: "Produto",
-        price: "R$ 18,90",
-        image: "https://picsum.photos/seed/blz/200/300",
-      },
-    ],
-  },
-];
+const getProducts = async (): Promise<Product[]> => {
+  const snapshot = await getDocs(collection(db, "products"));
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name ?? "",
+      price: data.price ?? "",
+      image: data.image ?? "",
+      category: data.category ?? "", // ex: "cat1"
+      // Add other fields if needed
+    };
+  });
+};
+type Product = {
+  id: string;
+  name: string;
+  price: string;
+  image: string;
+  category: string; // ex: "cat1"
+  // Add other fields if needed
+};
 
 export function Catalog() {
+  
   const theme = useTheme();
+  const { addItem } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+const [categories, setCategories] = useState<
+  { id: string; name: string; products: Product[] }[]
+>([]);
+
+useEffect(() => {
+  (async () => {
+    const data = await getProducts();
+    const grouped = groupByCategory(data);
+    setCategories(Object.values(grouped));
+  })();
+}, []);
+
+// Função para agrupar produtos por categoria
+  const groupByCategory = (items: Product[]) => {
+    return items.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = { id: item.category, name: item.category, products: [] };
+      }
+      acc[item.category].products.push(item);
+      return acc;
+    }, {} as { [key: string]: { id: string; name: string; products: Product[] } });
+  };
+
+
   const styles = StyleSheet.create({
     pageContainer: {
       flex: 1,
@@ -162,13 +136,19 @@ export function Catalog() {
       bottom: 0,
       backgroundColor: theme.colors.primary, // FAB background color
     },
+    addToCartButton: {
+      marginTop: 6,
+      width: "100%",
+      paddingVertical: 2,
+      justifyContent: "center",
+    },
   });
 
   return (
     <View style={styles.pageContainer}>
       <View style={styles.contentBody}>
         <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
-          {categoriesData.map((category) => (
+          {products.map((category) => (
             <View key={category.id} style={styles.categorySection}>
               <Text style={styles.categoryTitleText}>{category.name}</Text>
               <ScrollView
@@ -191,6 +171,27 @@ export function Catalog() {
                       <Text style={styles.productItemPrice}>
                         {product.price}
                       </Text>
+                      <Button
+                        mode="contained"
+                        onPress={() => {
+                          const numericPrice = parseFloat(
+                            product.price
+                              .replace(/[^\d.,]/g, "")
+                              .replace(",", ".")
+                          );
+                          addItem({
+                            id: product.id,
+                            name: product.name,
+                            price: numericPrice,
+                            image: product.image,
+                            quantity: 1,
+                          });
+                        }}
+                        style={styles.addToCartButton}
+                        compact
+                      >
+                        Add to Cart
+                      </Button>
                     </View>
                   </Card>
                 ))}

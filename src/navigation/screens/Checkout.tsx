@@ -11,36 +11,15 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper"; // Mock cart data - in a real app, this would come from a state management solution
+import { useCart } from "../../contexts/CartContext"; // ajuste o caminho conforme necessário
 
 // Mock cart data - in a real app, this would come from a state management solution
-const initialCartItems = [
-  {
-    id: "p1",
-    name: "Produto 1",
-    price: 18.9,
-    quantity: 2,
-    image: "https://picsum.photos/seed/green/200/300",
-  },
-  {
-    id: "p2",
-    name: "Produto 2",
-    price: 24.5,
-    quantity: 1,
-    image: "https://picsum.photos/seed/basket/200/300",
-  },
-  {
-    id: "p3",
-    name: "Produto 3",
-    price: 12.75,
-    quantity: 3,
-    image: "https://picsum.photos/seed/2025/200/300",
-  },
-];
-
 export function Checkout() {
   const navigation = useNavigation();
   const theme = useTheme();
-  const [cartItems] = useState(initialCartItems);
+
+// ...
+  const { cartItems } = useCart();
   const [paymentMethod, setPaymentMethod] = useState("credit");
   const [address, setAddress] = useState({
     street: "",

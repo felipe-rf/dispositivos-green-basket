@@ -10,7 +10,7 @@ import {
 } from "react-native-paper";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-
+import { CartProvider } from "./contexts/CartContext";
 Asset.loadAsync([
   ...NavigationAssets,
   require("./assets/newspaper.png"),
@@ -95,29 +95,31 @@ export function App() {
 
   return (
     <PaperProvider theme={theme}>
-      <Navigation
-        linking={{
-          enabled: "auto",
-          prefixes: ["helloworld://"],
-          config: {
-            screens: {
-              HomeTabs: "home",
-              Login: "login",
-              Profile: ":user",
-              Settings: "settings",
-              SellerProfile: "seller/:user",
-              FAQ: "faq",
-              Cart: "cart",
-              Recipes: "recipes",
-              Checkout: "checkout",
-              NotFound: "*",
-            },
-          },
-        }}
-        onReady={() => {
-          SplashScreen.hideAsync();
-        }}
-      />
+<CartProvider>
+<Navigation
+  linking={{
+    enabled: "auto",
+    prefixes: ["helloworld://"],
+    config: {
+      screens: {
+        HomeTabs: "home",
+        Login: "login",
+        Profile: ":user",
+        Settings: "settings",
+        SellerProfile: "seller/:user",
+        FAQ: "faq",
+        Cart: "cart",
+        Recipes: "recipes",
+        Checkout: "checkout",
+        NotFound: "*",
+      },
+    },
+  }}
+  onReady={() => {
+    SplashScreen.hideAsync();
+  }}
+/>
+</CartProvider>
     </PaperProvider>
   );
 }
