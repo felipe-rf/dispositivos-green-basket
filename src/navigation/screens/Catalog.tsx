@@ -190,7 +190,7 @@ useEffect(() => {
                         style={styles.addToCartButton}
                         compact
                       >
-                        Add to Cart
+                        Adicionar
                       </Button>
                     </View>
                   </Card>

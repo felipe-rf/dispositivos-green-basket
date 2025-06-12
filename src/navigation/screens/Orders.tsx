@@ -321,7 +321,7 @@ const submitRating = async () => {
                     style={styles.rateButton}
                     onPress={() => openRatingModal(order.id)}
                   >
-                    Avaliar order
+                    Avaliar pedido
                   </Button>
                 )}
               </View>
