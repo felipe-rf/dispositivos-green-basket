@@ -3,6 +3,7 @@ import { HeaderButton, Text } from "@react-navigation/elements";
 import {
   createStaticNavigation,
   StaticParamList,
+  useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Image } from "react-native";
@@ -83,20 +84,20 @@ const RootStack = createNativeStackNavigator({
         size={40}
         icon="account"
         style={{
-          color: "#fff",
           backgroundColor: "#fff",
           marginLeft: 10,
           marginRight: 10,
         }}
       />
     ),
-    headerRight: ({ navigation }) => (
+  
+    headerRight: () => {const navigation = useNavigation(); return(
       <>
         <IconButton
           icon="magnify"
           iconColor="#fff"
           size={28}
-          onPress={() => {}}
+          onPress={() => { navigation.navigate("Catalog") }}
         />
         <IconButton
           icon="cart-outline"
@@ -111,7 +112,7 @@ const RootStack = createNativeStackNavigator({
           onPress={() => navigation.navigate("Orders")}
         />
       </>
-    ),
+    )},
   },
   screens: {
     HomeTabs: {
@@ -129,8 +130,8 @@ const RootStack = createNativeStackNavigator({
     },
     Profile: {
       screen: Profile,
-      options: ({ route }) => ({
-        title: `Perfil: ${route.params.user}`,
+      options: ({ route }: { route: { params?: { user?: string } } }) => ({
+        title: `Perfil: ${route.params?.user ?? ""}`,
       }),
       linking: {
         path: ":user(@[a-zA-Z0-9-_]+)",
@@ -196,14 +197,14 @@ const RootStack = createNativeStackNavigator({
       screen: Recipes,
       options: {
         title: "Receitas",
-        headerRight: ({ navigation }) => (
+        headerRight: () => {const navigation = useNavigation(); return(
           <IconButton
             icon="heart-outline"
             iconColor="#fff"
             size={28}
             onPress={() => console.log("Favorite toggled")}
           />
-        ),
+        )},
       },
     },
     Checkout: {
@@ -224,9 +225,7 @@ const RootStack = createNativeStackNavigator({
   },
 });
 
-export const Navigation = createStaticNavigation(RootStack, {
-  initialRouteName: "Home",
-});
+export const Navigation = createStaticNavigation(RootStack);
 
 type RootStackParamList = StaticParamList<typeof RootStack>;
 
