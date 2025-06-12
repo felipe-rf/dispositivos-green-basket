@@ -279,7 +279,7 @@ const submitRating = async () => {
             </Card.Content>
 
             <List.Accordion
-              title="Detalhes do order"
+              title="Detalhes do pedido"
               expanded={expandedId === order.id}
               onPress={() => handleAccordionToggle(order.id)}
             >
