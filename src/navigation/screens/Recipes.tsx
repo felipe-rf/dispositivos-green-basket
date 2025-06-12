@@ -19,7 +19,7 @@ type Recipe = {
   servings: number; // Assuming servings is stored as a number
   image: string;
   isFavorite: boolean;
-  // Add other fields if needed, e.g., ingredients, instructions
+  // Add other fields if needed, e.g., ingredients,+instructions
 };
 
 // Function to fetch recipes from Firebase
@@ -30,7 +30,7 @@ const getRecipes = async (): Promise<Recipe[]> => {
       const data = doc.data();
       return {
         id: doc.id,
-        name: data.name ?? "Unnamed Recipe",
+        name: data.name ?? "Receita sem nome",
         prepTime: typeof data.prepTime === "number" ? data.prepTime : 0,
         servings: typeof data.servings === "number" ? data.servings : 0,
         image:
