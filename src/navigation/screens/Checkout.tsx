@@ -19,7 +19,7 @@ import { db } from "../../firebaseConfig";
 export function Checkout() {
   const navigation = useNavigation();
   const theme = useTheme();
-
+  const {clearCart} = useCart();
 // ...
   const { cartItems } = useCart();
   const [paymentMethod, setPaymentMethod] = useState("credit");
@@ -65,7 +65,7 @@ export function Checkout() {
       };
 
       await addDoc(collection(db, "orders"), order);
-
+      clearCart(); // Limpar o carrinho após finalizar o pedido
       // Navegar para tela de pedidos ou mostrar confirmação
       navigation.navigate("Orders");
     } catch (error) {

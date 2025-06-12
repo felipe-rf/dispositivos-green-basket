@@ -1,12 +1,17 @@
 import { StaticScreenProps } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Card, useTheme } from "react-native-paper";
+  import { getAuth } from "firebase/auth";
 
 type Props = StaticScreenProps<{
   user: string;
 }>;
 
 export function Profile({ route }: Props) {
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const theme = useTheme();
   const styles = StyleSheet.create({
     card: {
@@ -63,7 +68,7 @@ export function Profile({ route }: Props) {
           style={styles.avatar}
         />
         <Card.Content style={{ padding: 0 }}>
-          <Card.Title title={"José Pereira"} subtitle={"Cliente"} />
+          <Card.Title title={user?.email} subtitle={"Cliente"} />
           <Card style={{ marginTop: 20 }}>
             {options.map((option, index) => (
               <Card.Content
