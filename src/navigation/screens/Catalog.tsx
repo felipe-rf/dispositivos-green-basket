@@ -34,7 +34,7 @@ export function Catalog() {
   
   const theme = useTheme();
   const { addItem } = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
+// Removed unused products state
 const [categories, setCategories] = useState<
   { id: string; name: string; products: Product[] }[]
 >([]);
@@ -148,7 +148,7 @@ useEffect(() => {
     <View style={styles.pageContainer}>
       <View style={styles.contentBody}>
         <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
-          {products.map((category) => (
+          {categories.map((category) => (
             <View key={category.id} style={styles.categorySection}>
               <Text style={styles.categoryTitleText}>{category.name}</Text>
               <ScrollView
@@ -156,11 +156,10 @@ useEffect(() => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.productsHorizontalScrollView}
               >
-                {category.products.map((product) => (
+                {category.products.map((product: Product) => (
                   <Card
                     key={product.id}
                     style={styles.productItemCard}
-                    elevation={styles.productItemCard.elevation}
                   >
                     <View style={styles.productItemContent}>
                       <Image
