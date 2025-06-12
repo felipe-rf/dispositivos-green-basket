@@ -54,38 +54,38 @@ export function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const pedidosSnapshot = await getDocs(collection(db, "orders"));
-        const produtosSnapshot = await getDocs(collection(db, "products"));
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        const productsSnapshot = await getDocs(collection(db, "products"));
 
-        const produtosMap: Record<string, any> = {};
-        produtosSnapshot.forEach((doc) => {
-          produtosMap[doc.id] = doc.data();
+        const productsMap: Record<string, any> = {};
+        productsSnapshot.forEach((doc) => {
+          productsMap[doc.id] = doc.data();
         });
 
         const formattedOrders = await Promise.all(
-          pedidosSnapshot.docs.map(async (pedidoDoc) => {
-            const pedido = pedidoDoc.data();
-            const items = pedido.produtos.map((p: any) => {
-              const produtoInfo = produtosMap[p.id] || {};
+          ordersSnapshot.docs.map(async (orderDoc) => {
+            const order = orderDoc.data();
+            const items = order.products.map((p: any) => {
+              const productInfo = productsMap[p.id] || {};
               return {
                 id: p.id,
-                name: produtoInfo.nome || "Produto",
-                price: produtoInfo.valor || 0,
-                quantity: p.quantidade,
-                image: produtoInfo.foto || "https://via.placeholder.com/200",
+                name: productInfo.name || "product",
+                price: productInfo.price || 0,
+                quantity: p.quantity,
+                image: productInfo.image || "https://via.placeholder.com/200",
               };
             });
 
             const totalValue = items.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
 
             return {
-              id: pedidoDoc.id,
-              date: new Date(pedido.data).toLocaleDateString(),
+              id: orderDoc.id,
+              date: order.date.toDate().toLocaleDateString(),
               deliveryDate: "N/A", // optional enhancement
               value: totalValue,
               items,
-              rated: !!pedido.avaliacao,
-              rating: pedido.avaliacao || 0,
+              rated: !!order.rating,
+              rating: order.rating || 0,
             };
           })
         );
@@ -105,7 +105,7 @@ export function Orders() {
 const submitRating = async () => {
   if (currentOrderId && rating > 0) {
     try {
-      await updateDoc(doc(db, "pedidos", currentOrderId), {
+      await updateDoc(doc(db, "orders", currentOrderId), {
         avaliacao: rating,
       });
       setOrders(
@@ -279,7 +279,7 @@ const submitRating = async () => {
             </Card.Content>
 
             <List.Accordion
-              title="Detalhes do pedido"
+              title="Detalhes do order"
               expanded={expandedId === order.id}
               onPress={() => handleAccordionToggle(order.id)}
             >
@@ -321,7 +321,7 @@ const submitRating = async () => {
                     style={styles.rateButton}
                     onPress={() => openRatingModal(order.id)}
                   >
-                    Avaliar pedido
+                    Avaliar order
                   </Button>
                 )}
               </View>

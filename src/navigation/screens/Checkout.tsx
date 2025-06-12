@@ -12,6 +12,8 @@ import {
   useTheme,
 } from "react-native-paper"; // Mock cart data - in a real app, this would come from a state management solution
 import { useCart } from "../../contexts/CartContext"; // ajuste o caminho conforme necessário
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
 // Mock cart data - in a real app, this would come from a state management solution
 export function Checkout() {
@@ -46,9 +48,31 @@ export function Checkout() {
 
   const handleConfirmOrder = () => {
     // In a real app, this would send the order to a backend
+    finalizeOrder();
     alert("Pedido confirmado com sucesso!");
     navigation.navigate("Orders");
   };
+
+    const finalizeOrder = async () => {
+    try {
+      const order = {
+        date: Timestamp.now(),
+        products: cartItems.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+        })),
+        rating: null,
+      };
+
+      await addDoc(collection(db, "orders"), order);
+
+      // Navegar para tela de pedidos ou mostrar confirmação
+      navigation.navigate("Orders");
+    } catch (error) {
+      console.error("Erro ao finalizar pedido:", error);
+    }
+  };
+
 
   const styles = StyleSheet.create({
     container: {

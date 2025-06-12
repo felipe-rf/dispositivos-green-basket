@@ -14,6 +14,9 @@ import {
 } from "react-native-paper"; // Mock cart data - in a real app, this would come from a state management solution
 import { useCart } from "../../contexts/CartContext";
 
+
+
+
 export function Cart() {
   const navigation = useNavigation();
   const theme = useTheme();
@@ -21,6 +24,7 @@ export function Cart() {
   const { cartItems, updateItemQuantity } = useCart();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
 
   // Functions to handle quantity changes
   const incrementQuantity = (id: string) => {
@@ -250,7 +254,10 @@ export function Cart() {
           <Button
             mode="contained"
             style={styles.modalButton}
-            onPress={hideModal}
+            onPress={() => {
+              hideModal();
+            }
+            }
           >
             Fechar
           </Button>
@@ -259,3 +266,5 @@ export function Cart() {
     </View>
   );
 }
+
+
