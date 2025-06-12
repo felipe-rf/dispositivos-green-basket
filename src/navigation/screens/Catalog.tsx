@@ -173,8 +173,9 @@ useEffect(() => {
                       <Button
                         mode="contained"
                         onPress={() => {
+                          const priceString = String(product.price);
                           const numericPrice = parseFloat(
-                            product.price
+                            priceString
                               .replace(/[^\d.,]/g, "")
                               .replace(",", ".")
                           );

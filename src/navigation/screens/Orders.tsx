@@ -54,8 +54,8 @@ export function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const pedidosSnapshot = await getDocs(collection(db, "pedidos"));
-        const produtosSnapshot = await getDocs(collection(db, "produtos"));
+        const pedidosSnapshot = await getDocs(collection(db, "orders"));
+        const produtosSnapshot = await getDocs(collection(db, "products"));
 
         const produtosMap: Record<string, any> = {};
         produtosSnapshot.forEach((doc) => {

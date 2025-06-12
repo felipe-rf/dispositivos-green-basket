@@ -22,6 +22,7 @@ const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const addItem = (item: CartItem) => {
+    console.log("Adding item to cart:", item); // <-- Add this
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
