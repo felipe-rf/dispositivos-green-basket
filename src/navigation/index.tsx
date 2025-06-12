@@ -1,4 +1,3 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HeaderButton, Text } from "@react-navigation/elements";
 import {
   createStaticNavigation,
@@ -6,16 +5,13 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Image } from "react-native";
-import bell from "../assets/bell.png";
-import newspaper from "../assets/newspaper.png";
 import { Home } from "./screens/Home";
 import { Profile } from "./screens/Profile";
 import { SellerProfile } from "./screens/SellerProfile";
 import { Settings } from "./screens/Settings";
-import { Updates } from "./screens/Updates";
 import { NotFound } from "./screens/NotFound";
 import { Login } from "./screens/Login";
+
 import { FAQ } from "./screens/FAQ";
 import { Catalog } from "./screens/Catalog";
 import { Cart } from "./screens/Cart";
@@ -23,42 +19,6 @@ import { Orders } from "./screens/Orders";
 import { Recipes } from "./screens/Recipes";
 import { Avatar, IconButton } from "react-native-paper";
 import { Checkout } from "./screens/Checkout";
-
-const HomeTabs = createBottomTabNavigator({
-  screens: {
-    Home: {
-      screen: Home,
-      options: {
-        title: "Feed",
-        tabBarIcon: ({ color, size }) => (
-          <Image
-            source={newspaper}
-            tintColor={color}
-            style={{
-              width: size,
-              height: size,
-            }}
-          />
-        ),
-      },
-    },
-    Updates: {
-      screen: Updates,
-      options: {
-        tabBarIcon: ({ color, size }) => (
-          <Image
-            source={bell}
-            tintColor={color}
-            style={{
-              width: size,
-              height: size,
-            }}
-          />
-        ),
-      },
-    },
-  },
-});
 
 const RootStack = createNativeStackNavigator({
   screenOptions: {
@@ -90,44 +50,49 @@ const RootStack = createNativeStackNavigator({
         }}
       />
     ),
-  
-    headerRight: () => {const navigation = useNavigation(); return(
-      <>
-        <IconButton
-          icon="magnify"
-          iconColor="#fff"
-          size={28}
-          onPress={() => { navigation.navigate("Catalog") }}
-        />
-        <IconButton
-          icon="cart-outline"
-          iconColor="#fff"
-          size={28}
-          onPress={() => navigation.navigate("Cart")}
-        />
-        <IconButton
-          icon="package-variant"
-          iconColor="#fff"
-          size={28}
-          onPress={() => navigation.navigate("Orders")}
-        />
-      </>
-    )},
+
+    headerRight: () => {
+      const navigation = useNavigation();
+      return (
+        <>
+          <IconButton
+            icon="magnify"
+            iconColor="#fff"
+            size={28}
+            onPress={() => {
+              navigation.navigate("Catalog");
+            }}
+          />
+          <IconButton
+            icon="cart-outline"
+            iconColor="#fff"
+            size={28}
+            onPress={() => navigation.navigate("Cart")}
+          />
+          <IconButton
+            icon="package-variant"
+            iconColor="#fff"
+            size={28}
+            onPress={() => navigation.navigate("Orders")}
+          />
+        </>
+      );
+    },
   },
   screens: {
-    HomeTabs: {
-      screen: HomeTabs,
-      options: {
-        title: "Home",
-        headerShown: false,
-      },
-    },
     Login: {
       screen: Login,
       options: {
         headerShown: false,
       },
     },
+    Home: {
+      screen: Home,
+      options: {
+        title: "Telas",
+      },
+    },
+
     Profile: {
       screen: Profile,
       options: ({ route }: { route: { params?: { user?: string } } }) => ({
@@ -197,14 +162,17 @@ const RootStack = createNativeStackNavigator({
       screen: Recipes,
       options: {
         title: "Receitas",
-        headerRight: () => {const navigation = useNavigation(); return(
-          <IconButton
-            icon="heart-outline"
-            iconColor="#fff"
-            size={28}
-            onPress={() => console.log("Favorite toggled")}
-          />
-        )},
+        headerRight: () => {
+          const navigation = useNavigation();
+          return (
+            <IconButton
+              icon="heart-outline"
+              iconColor="#fff"
+              size={28}
+              onPress={() => console.log("Favorite toggled")}
+            />
+          );
+        },
       },
     },
     Checkout: {

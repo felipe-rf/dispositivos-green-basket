@@ -32,14 +32,14 @@ export function Login() {
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, email, password);
         Alert.alert("Success", "Account created successfully");
-        navigation.navigate("HomeTabs");
+        navigation.navigate("Home");
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        navigation.navigate("HomeTabs");
+        navigation.navigate("Home");
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Ocorrio um erro desconhecido";
+        error instanceof Error ? error.message : "Ocorreu um erro desconhecido";
       Alert.alert("Erro de autenticação", errorMessage);
     } finally {
       setLoading(false);
