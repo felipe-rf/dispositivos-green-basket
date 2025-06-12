@@ -1,0 +1,40 @@
+{
+  "orders": [
+    {
+      "id": "1Q8AlQYhFgwn8uD9SBkU",
+      "date": "2025-06-12T18:33:22-03:00",
+      "products": [
+        { "id": "tCPXZeA7AsN6YmAihKKB", "quantity": 3 },
+        { "id": "V0w38UATxbmRP2YNqiLz", "quantity": 4 }
+      ],
+      "rating": null
+    }
+  ],
+  "products": [
+    {
+      "id": "AMBe0BmgUurbRul5ef1E",
+      "name": "Espinafre",
+      "price": 10,
+      "category": "Verde",
+      "image": "/https://picsum.photos/seed/basket/200/300"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "59WTEDWXntyQQDxDCXxd",
+      "recipeId": "recipe4",
+      "name": "Bowl de Quinoa",
+      "image": "https://picsum.photos/seed/quinoa/200/300",
+      "isFavorite": true,
+      "prepTime": 25,
+      "servings": 2
+    }
+  ],
+  "faq": [
+    {
+      "id": "204akNJQcrsbsc4jz7rd",
+      "title": "Como faço para comprar?",
+      "content": "Para comprar, adicione os produtos ao carrinho e finalize o pedido na seção de checkout."
+    }
+  ]
+}
