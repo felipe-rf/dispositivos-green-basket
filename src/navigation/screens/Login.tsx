@@ -20,16 +20,52 @@ export function Login() {
   const [password, setPassword] = useState("123456");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    // Minimum 6 characters, at least one letter and one number
+    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    return re.test(password);
+  };
 
   const handleAuth = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter both email and password");
+    // Reset errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Basic validation
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+    
+    if (!password) {
+      setPasswordError("Password is required");
+      return;
+    }
+
+    // Email format validation
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    // Password validation (only for sign up)
+    if (isSignUp && !validatePassword(password)) {
+      setPasswordError("Password must be at least 6 characters with at least one letter and one number");
       return;
     }
 
     try {
       setLoading(true);
       if (isSignUp) {
+        console.log("Creating new user");
         await createUserWithEmailAndPassword(auth, email, password);
         Alert.alert("Success", "Account created successfully");
         navigation.navigate("Home");
@@ -39,8 +75,20 @@ export function Login() {
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Ocorreu um erro desconhecido";
-      Alert.alert("Erro de autenticação", errorMessage);
+        error instanceof Error ? error.message : "An unknown error occurred";
+      
+      // Handle specific Firebase errors
+      if (error.code === "auth/email-already-in-use") {
+        setEmailError("Email already in use");
+      } else if (error.code === "auth/invalid-email") {
+        setEmailError("Invalid email address");
+      } else if (error.code === "auth/weak-password") {
+        setPasswordError("Password should be at least 6 characters");
+      } else if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+        setPasswordError("Invalid email or password");
+      } else {
+        Alert.alert("Authentication Error", errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -51,42 +99,53 @@ export function Login() {
       <Text style={styles.title}>Green Basket</Text>
       <View style={styles.form}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, emailError ? styles.inputError : null]}
           placeholder="Email"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => {
+            setEmail(text);
+            setEmailError("");
+          }}
           keyboardType="email-address"
           autoCapitalize="none"
         />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
         <TextInput
-          style={styles.input}
-          placeholder="Senha"
+          style={[styles.input, passwordError ? styles.inputError : null]}
+          placeholder="Password"
           value={password}
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            setPasswordError("");
+          }}
           secureTextEntry
         />
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
         {loading ? (
           <ActivityIndicator size="large" color="#4CAF50" />
         ) : (
           <>
-            <Button onPress={handleAuth} style={styles.authButton}>
-              <Text style={styles.buttonText}>
-                {isSignUp ? "Criar conta" : "Entrar"}
-              </Text>
-            </Button>
+            <Button
+              onPress={handleAuth}
+              style={styles.authButton}
+              children={isSignUp ? "Create account" : "Login"}
+            />
 
             <Button
-              onPress={() => setIsSignUp(!isSignUp)}
+              onPress={() => {
+                setIsSignUp(!isSignUp);
+                setEmailError("");
+                setPasswordError("");
+              }}
               style={styles.switchButton}
-            >
-              <Text style={styles.switchText}>
-                {isSignUp
-                  ? "Já tem uma conta? Login"
-                  : "Não tem uma conta? Criar"}
-              </Text>
-            </Button>
+              children={
+                isSignUp
+                  ? "Already have an account? Login"
+                  : "Don't have an account? Create one"
+              }
+            />
           </>
         )}
       </View>
@@ -123,20 +182,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "white",
   },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 20,
-    color: "#333",
-  },
   input: {
     width: "100%",
     height: 50,
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingHorizontal: 15,
     backgroundColor: "white",
+  },
+  inputError: {
+    borderColor: "#ff4444",
+  },
+  errorText: {
+    color: "#ff4444",
+    fontSize: 12,
+    marginBottom: 10,
+    marginTop: -5,
   },
   authButton: {
     width: "100%",
@@ -147,16 +210,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   switchButton: {
     marginTop: 20,
-  },
-  switchText: {
-    color: "#4CAF50",
-    fontSize: 14,
   },
 });
