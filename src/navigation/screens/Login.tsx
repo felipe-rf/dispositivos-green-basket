@@ -41,24 +41,26 @@ export function Login() {
 
     // Basic validation
     if (!email) {
-      setEmailError("Email is required");
+      setEmailError("O e-mail é obrigatório"); // Translated
       return;
     }
-    
+
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError("A senha é obrigatória"); // Translated
       return;
     }
 
     // Email format validation
     if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError("Por favor, insira um endereço de e-mail válido"); // Translated
       return;
     }
 
     // Password validation (only for sign up)
     if (isSignUp && !validatePassword(password)) {
-      setPasswordError("Password must be at least 6 characters with at least one letter and one number");
+      setPasswordError(
+        "A senha deve ter no mínimo 6 caracteres, com pelo menos uma letra e um número", // Translated
+      );
       return;
     }
 
@@ -67,7 +69,7 @@ export function Login() {
       if (isSignUp) {
         console.log("Creating new user");
         await createUserWithEmailAndPassword(auth, email, password);
-        Alert.alert("Success", "Account created successfully");
+        Alert.alert("Sucesso", "Conta criada com sucesso"); // Translated
         navigation.navigate("Home");
       } else {
         await signInWithEmailAndPassword(auth, email, password);
@@ -75,19 +77,23 @@ export function Login() {
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      
+        error instanceof Error ? error.message : "Ocorreu um erro desconhecido"; // Translated
+
       // Handle specific Firebase errors
       if (error.code === "auth/email-already-in-use") {
-        setEmailError("Email already in use");
+        setEmailError("E-mail já em uso"); // Translated
       } else if (error.code === "auth/invalid-email") {
-        setEmailError("Invalid email address");
+        setEmailError("Endereço de e-mail inválido"); // Translated
       } else if (error.code === "auth/weak-password") {
-        setPasswordError("Password should be at least 6 characters");
-      } else if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
-        setPasswordError("Invalid email or password");
+        setPasswordError("A senha deve ter no mínimo 6 caracteres"); // Translated
+      } else if (
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/invalid-credential" // Added this common Firebase error code
+      ) {
+        setPasswordError("E-mail ou senha inválidos"); // Translated
       } else {
-        Alert.alert("Authentication Error", errorMessage);
+        Alert.alert("Erro de Autenticação", errorMessage); // Translated title
       }
     } finally {
       setLoading(false);
@@ -100,7 +106,7 @@ export function Login() {
       <View style={styles.form}>
         <TextInput
           style={[styles.input, emailError ? styles.inputError : null]}
-          placeholder="Email"
+          placeholder="E-mail" // Translated
           value={email}
           onChangeText={(text) => {
             setEmail(text);
@@ -113,7 +119,7 @@ export function Login() {
 
         <TextInput
           style={[styles.input, passwordError ? styles.inputError : null]}
-          placeholder="Password"
+          placeholder="Senha" // Translated
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -121,7 +127,9 @@ export function Login() {
           }}
           secureTextEntry
         />
-        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+        {passwordError ? (
+          <Text style={styles.errorText}>{passwordError}</Text>
+        ) : null}
 
         {loading ? (
           <ActivityIndicator size="large" color="#4CAF50" />
@@ -130,7 +138,7 @@ export function Login() {
             <Button
               onPress={handleAuth}
               style={styles.authButton}
-              children={isSignUp ? "Create account" : "Login"}
+              children={isSignUp ? "Criar conta" : "Entrar"} // Translated
             />
 
             <Button
@@ -142,8 +150,8 @@ export function Login() {
               style={styles.switchButton}
               children={
                 isSignUp
-                  ? "Already have an account? Login"
-                  : "Don't have an account? Create one"
+                  ? "Já tem uma conta? Entrar" // Translated
+                  : "Não tem uma conta? Crie uma" // Translated
               }
             />
           </>
