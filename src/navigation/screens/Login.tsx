@@ -23,12 +23,12 @@ export function Login() {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const validatePassword = (password) => {
+  const validatePassword = (password: string) => {
     // Minimum 6 characters, at least one letter and one number
     const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
     return re.test(password);

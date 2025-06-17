@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useCart } from "../../contexts/CartContext"; // Adjust path if necessary
-import { Button } from "react-native-paper"; // Using react-native-paper button
-
-import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Card, FAB, Text, useTheme } from "react-native-paper";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+
 const getProducts = async (): Promise<Product[]> => {
   const snapshot = await getDocs(collection(db, "products"));
   return snapshot.docs.map((doc) => {
@@ -31,35 +30,42 @@ type Product = {
 };
 
 export function Catalog() {
-  
   const theme = useTheme();
   const { addItem } = useCart();
   const navigation = useNavigation();
-  
-// Removed unused products state
-const [categories, setCategories] = useState<
-  { id: string; name: string; products: Product[] }[]
->([]);
 
-useEffect(() => {
-  (async () => {
-    const data = await getProducts();
-    const grouped = groupByCategory(data);
-    setCategories(Object.values(grouped));
-  })();
-}, []);
+  // Removed unused products state
+  const [categories, setCategories] = useState<
+    { id: string; name: string; products: Product[] }[]
+  >([]);
 
-// Função para agrupar produtos por categoria
+  useEffect(() => {
+    (async () => {
+      const data = await getProducts();
+      const grouped = groupByCategory(data);
+      setCategories(Object.values(grouped));
+    })();
+  }, []);
+
+  // Função para agrupar produtos por categoria
   const groupByCategory = (items: Product[]) => {
-    return items.reduce((acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = { id: item.category, name: item.category, products: [] };
-      }
-      acc[item.category].products.push(item);
-      return acc;
-    }, {} as { [key: string]: { id: string; name: string; products: Product[] } });
+    return items.reduce(
+      (acc, item) => {
+        if (!acc[item.category]) {
+          acc[item.category] = {
+            id: item.category,
+            name: item.category,
+            products: [],
+          };
+        }
+        acc[item.category].products.push(item);
+        return acc;
+      },
+      {} as {
+        [key: string]: { id: string; name: string; products: Product[] };
+      },
+    );
   };
-
 
   const styles = StyleSheet.create({
     pageContainer: {
@@ -162,8 +168,9 @@ useEffect(() => {
                   <Card
                     key={product.id}
                     style={styles.productItemCard}
-onTouchEnd={() => navigation.navigate("ProductInfo", { id: product.id })}
-
+                    onPress={() =>
+                      navigation.navigate("ProductInfo", { id: product.id })
+                    }
                   >
                     <View style={styles.productItemContent}>
                       <Image
@@ -172,30 +179,11 @@ onTouchEnd={() => navigation.navigate("ProductInfo", { id: product.id })}
                       />
                       <Text style={styles.productItemName}>{product.name}</Text>
                       <Text style={styles.productItemPrice}>
-                        {product.price}
+                        {product.price.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
                       </Text>
-                      {/* <Button
-                        mode="contained"
-                        onPress={() => {
-                          const priceString = String(product.price);
-                          const numericPrice = parseFloat(
-                            priceString
-                              .replace(/[^\d.,]/g, "")
-                              .replace(",", ".")
-                          );
-                          addItem({
-                            id: product.id,
-                            name: product.name,
-                            price: numericPrice,
-                            image: product.image,
-                            quantity: 1,
-                          });
-                        }}
-                        style={styles.addToCartButton}
-                        compact
-                      >
-                        Adicionar
-                      </Button> */}
                     </View>
                   </Card>
                 ))}
