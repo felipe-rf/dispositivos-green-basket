@@ -1,8 +1,7 @@
-import { StaticScreenProps } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
-import { Avatar, Card, useTheme } from "react-native-paper";
-import { getAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View } from "react-native";
+import { Avatar, Card, TouchableRipple, useTheme } from "react-native-paper";
+import { getAuth } from "firebase/auth";
 
 export function Profile() {
   const navigation = useNavigation();
@@ -28,7 +27,7 @@ export function Profile() {
       alignSelf: "center",
     },
     menuItem: {
-      flexDirection: "row", 
+      flexDirection: "row",
       alignItems: "center",
       paddingVertical: 12,
     },
@@ -61,7 +60,10 @@ export function Profile() {
     {
       text: "Sair",
       icon: "logout",
-      onPress: () => {auth.signOut(); navigation.navigate("Login");},
+      onPress: () => {
+        auth.signOut();
+        navigation.navigate("Login");
+      },
     },
   ];
 
@@ -77,18 +79,16 @@ export function Profile() {
           <Card.Title title={user?.email} subtitle={"Cliente"} />
           <Card style={{ marginTop: 20 }}>
             {options.map((option, index) => (
-              <Card.Content
-                key={index}
-                style={styles.menuItem}
-                onTouchEnd={option.onPress}
-              >
-                <Avatar.Icon icon={option.icon} size={24} />
-                <Card.Title 
-                  title={option.text} 
-                  style={{ marginLeft: 10, width: '100%' }} 
-                  titleStyle={{ width: '100%' }}
-                />
-              </Card.Content>
+              <TouchableRipple onPress={option.onPress}>
+                <Card.Content key={index} style={styles.menuItem}>
+                  <Avatar.Icon icon={option.icon} size={24} />
+                  <Card.Title
+                    title={option.text}
+                    style={{ marginLeft: 10, width: "100%" }}
+                    titleStyle={{ width: "100%" }}
+                  />
+                </Card.Content>
+              </TouchableRipple>
             ))}
           </Card>
         </Card.Content>

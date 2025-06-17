@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableHighlight, View } from "react-native";
 import {
   Avatar,
   Button,
@@ -14,9 +14,6 @@ import {
 } from "react-native-paper"; // Mock cart data - in a real app, this would come from a state management solution
 import { useCart } from "../../contexts/CartContext";
 
-
-
-
 export function Cart() {
   const navigation = useNavigation();
   const theme = useTheme();
@@ -24,7 +21,6 @@ export function Cart() {
   const { cartItems, updateItemQuantity } = useCart();
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-
 
   // Functions to handle quantity changes
   const incrementQuantity = (id: string) => {
@@ -40,7 +36,7 @@ export function Cart() {
   // Calculate totals
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const shippingCost = 10.0; // Fixed shipping cost for this example
   const total = subtotal + shippingCost;
@@ -172,14 +168,17 @@ export function Cart() {
             <Card key={item.id} style={styles.cartItemCard}>
               <Card.Content>
                 <View style={styles.itemRow}>
-                  <Avatar.Image
-                    size={50}
-                    source={{ uri: item.image }}
-                    style={styles.itemImage}
-                    onTouchEnd={() =>
+                  <TouchableHighlight
+                    onPress={() =>
                       navigation.navigate("ProductInfo", { id: item.id })
                     }
-                  />
+                  >
+                    <Avatar.Image
+                      size={50}
+                      source={{ uri: item.image }}
+                      style={styles.itemImage}
+                    />
+                  </TouchableHighlight>
                   <View style={styles.itemDetails}>
                     <Text style={styles.itemName}>{item.name}</Text>
                     <Text style={styles.itemPrice}>
@@ -259,8 +258,7 @@ export function Cart() {
             style={styles.modalButton}
             onPress={() => {
               hideModal();
-            }
-            }
+            }}
           >
             Fechar
           </Button>
@@ -269,5 +267,3 @@ export function Cart() {
     </View>
   );
 }
-
-
