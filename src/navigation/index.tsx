@@ -17,7 +17,7 @@ import { Catalog } from "./screens/Catalog";
 import { Cart } from "./screens/Cart";
 import { Orders } from "./screens/Orders";
 import { Recipes } from "./screens/Recipes";
-import { Avatar, IconButton } from "react-native-paper";
+import { Avatar, IconButton, TouchableRipple } from "react-native-paper";
 import { Checkout } from "./screens/Checkout";
 import { ProductInfo } from "./screens/ProductInfo";
 
@@ -43,30 +43,23 @@ const RootStack = createNativeStackNavigator({
     headerLeft: () => {
       const navigation = useNavigation();
       return (
-        <Avatar.Icon
-          size={40}
-          icon="account"
-          style={{
-            backgroundColor: "#fff",
-            marginLeft: 10,
-            marginRight: 10,
-          }}
-          onTouchEnd={() => navigation.navigate("Profile")}
-        />
+        <TouchableRipple onPress={() => navigation.navigate("Catalog")}>
+          <Avatar.Icon
+            size={40}
+            icon="home-outline"
+            style={{
+              backgroundColor: "#fff",
+              marginLeft: 10,
+              marginRight: 10,
+            }}
+          />
+        </TouchableRipple>
       );
     },
     headerRight: () => {
       const navigation = useNavigation();
       return (
         <>
-          <IconButton
-            icon="magnify"
-            iconColor="#fff"
-            size={28}
-            onPress={() => {
-              navigation.navigate("Catalog");
-            }}
-          />
           <IconButton
             icon="cart-outline"
             iconColor="#fff"
@@ -78,6 +71,12 @@ const RootStack = createNativeStackNavigator({
             iconColor="#fff"
             size={28}
             onPress={() => navigation.navigate("Orders")}
+          />
+          <IconButton
+            icon="account-outline"
+            iconColor="#fff"
+            size={28}
+            onPress={() => navigation.navigate("Profile", { user: "jane" })}
           />
         </>
       );
@@ -161,7 +160,6 @@ const RootStack = createNativeStackNavigator({
           id: (value) => String(value),
         },
       },
-    
     },
     Cart: {
       screen: Cart,
