@@ -176,6 +176,9 @@ export function Cart() {
                     size={50}
                     source={{ uri: item.image }}
                     style={styles.itemImage}
+                    onTouchEnd={() =>
+                      navigation.navigate("ProductInfo", { id: item.id })
+                    }
                   />
                   <View style={styles.itemDetails}>
                     <Text style={styles.itemName}>{item.name}</Text>

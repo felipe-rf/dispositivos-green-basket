@@ -13,10 +13,8 @@ import {
   IconButton,
   ActivityIndicator,
 } from "react-native-paper";
-import { db } from "../../firebaseConfig";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { updateDoc } from "firebase/firestore";
-
+import { db, auth } from "../../firebaseConfig";
+import { collection, getDocs, doc, getDoc, query, where, updateDoc } from "firebase/firestore";
 // Simple Rating component for displaying and selecting ratings
 type RatingProps = {
   value: number;
@@ -53,50 +51,68 @@ export function Orders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      try {
-        const ordersSnapshot = await getDocs(collection(db, "orders"));
-        const productsSnapshot = await getDocs(collection(db, "products"));
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      setLoading(false);
+      return; // No user is logged in
+    }
 
-        const productsMap: Record<string, any> = {};
-        productsSnapshot.forEach((doc) => {
-          productsMap[doc.id] = doc.data();
+    // Query orders where userId matches the current user
+    const ordersQuery = query(
+      collection(db, "orders"),
+      where("userId", "==", user.uid)
+    );
+    
+    const ordersSnapshot = await getDocs(ordersQuery);
+    const productsSnapshot = await getDocs(collection(db, "products"));
+
+    const productsMap: Record<string, any> = {};
+    productsSnapshot.forEach((doc) => {
+      productsMap[doc.id] = doc.data();
+    });
+
+    const formattedOrders = await Promise.all(
+      ordersSnapshot.docs.map(async (orderDoc) => {
+        const order = orderDoc.data();
+        const items = order.products.map((p: any) => {
+          const productInfo = productsMap[p.id] || {};
+          return {
+            id: p.id,
+            name: productInfo.name || "product",
+            price: productInfo.price || 0,
+            quantity: p.quantity,
+            image: productInfo.image || "https://via.placeholder.com/200",
+          };
         });
 
-        const formattedOrders = await Promise.all(
-          ordersSnapshot.docs.map(async (orderDoc) => {
-            const order = orderDoc.data();
-            const items = order.products.map((p: any) => {
-              const productInfo = productsMap[p.id] || {};
-              return {
-                id: p.id,
-                name: productInfo.name || "product",
-                price: productInfo.price || 0,
-                quantity: p.quantity,
-                image: productInfo.image || "https://via.placeholder.com/200",
-              };
-            });
+        const totalValue = items.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
 
-            const totalValue = items.reduce((acc: number, item: any) => acc + item.price * item.quantity, 0);
+        return {
+          id: orderDoc.id,
+          date: order.date.toDate().toLocaleDateString(),
+          deliveryDate: order.deliveryDate || "N/A",
+          value: totalValue,
+          items,
+          rated: !!order.rating,
+          rating: order.rating || 0,
+          status: order.status || "pending", // Add status if available
+        };
+      })
+    );
 
-            return {
-              id: orderDoc.id,
-              date: order.date.toDate().toLocaleDateString(),
-              deliveryDate: "N/A", // optional enhancement
-              value: totalValue,
-              items,
-              rated: !!order.rating,
-              rating: order.rating || 0,
-            };
-          })
-        );
+    // Sort orders by date (newest first)
+    const sortedOrders = formattedOrders.sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 
-        setOrders(formattedOrders);
-      } catch (error) {
-        console.error("Erro ao buscar pedidos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setOrders(sortedOrders);
+  } catch (error) {
+    console.error("Erro ao buscar pedidos:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchOrders();
   }, []);

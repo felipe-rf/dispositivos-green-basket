@@ -19,6 +19,7 @@ import { Orders } from "./screens/Orders";
 import { Recipes } from "./screens/Recipes";
 import { Avatar, IconButton } from "react-native-paper";
 import { Checkout } from "./screens/Checkout";
+import { ProductInfo } from "./screens/ProductInfo";
 
 const RootStack = createNativeStackNavigator({
   screenOptions: {
@@ -39,18 +40,21 @@ const RootStack = createNativeStackNavigator({
     headerTitleStyle: {
       fontWeight: "bold",
     },
-    headerLeft: () => (
-      <Avatar.Icon
-        size={40}
-        icon="account"
-        style={{
-          backgroundColor: "#fff",
-          marginLeft: 10,
-          marginRight: 10,
-        }}
-      />
-    ),
-
+    headerLeft: () => {
+      const navigation = useNavigation();
+      return (
+        <Avatar.Icon
+          size={40}
+          icon="account"
+          style={{
+            backgroundColor: "#fff",
+            marginLeft: 10,
+            marginRight: 10,
+          }}
+          onTouchEnd={() => navigation.navigate("Profile")}
+        />
+      );
+    },
     headerRight: () => {
       const navigation = useNavigation();
       return (
@@ -145,6 +149,19 @@ const RootStack = createNativeStackNavigator({
       options: {
         title: "Catálogo de Produtos",
       },
+    },
+    ProductInfo: {
+      screen: ProductInfo,
+      options: {
+        title: "Detalhes do Produto",
+      },
+      linking: {
+        path: "product/:id",
+        parse: {
+          id: (value) => String(value),
+        },
+      },
+    
     },
     Cart: {
       screen: Cart,

@@ -6,7 +6,7 @@ import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Card, FAB, Text, useTheme } from "react-native-paper";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-
+import { useNavigation } from "@react-navigation/native";
 const getProducts = async (): Promise<Product[]> => {
   const snapshot = await getDocs(collection(db, "products"));
   return snapshot.docs.map((doc) => {
@@ -34,6 +34,8 @@ export function Catalog() {
   
   const theme = useTheme();
   const { addItem } = useCart();
+  const navigation = useNavigation();
+  
 // Removed unused products state
 const [categories, setCategories] = useState<
   { id: string; name: string; products: Product[] }[]
@@ -160,6 +162,8 @@ useEffect(() => {
                   <Card
                     key={product.id}
                     style={styles.productItemCard}
+onTouchEnd={() => navigation.navigate("ProductInfo", { id: product.id })}
+
                   >
                     <View style={styles.productItemContent}>
                       <Image
@@ -170,7 +174,7 @@ useEffect(() => {
                       <Text style={styles.productItemPrice}>
                         {product.price}
                       </Text>
-                      <Button
+                      {/* <Button
                         mode="contained"
                         onPress={() => {
                           const priceString = String(product.price);
@@ -191,7 +195,7 @@ useEffect(() => {
                         compact
                       >
                         Adicionar
-                      </Button>
+                      </Button> */}
                     </View>
                   </Card>
                 ))}

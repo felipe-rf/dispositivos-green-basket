@@ -112,6 +112,7 @@ export function App() {
         Recipes: "recipes",
         Checkout: "checkout",
         NotFound: "*",
+        ProductInfo: "product/:id",
       },
     },
   }}

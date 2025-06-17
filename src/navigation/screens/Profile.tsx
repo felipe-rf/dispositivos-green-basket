@@ -1,14 +1,11 @@
 import { StaticScreenProps } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Card, useTheme } from "react-native-paper";
-  import { getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 
-type Props = StaticScreenProps<{
-  user: string;
-}>;
-
-export function Profile({ route }: Props) {
-
+export function Profile() {
+  const navigation = useNavigation();
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -30,16 +27,23 @@ export function Profile({ route }: Props) {
       marginTop: -70,
       alignSelf: "center",
     },
+    menuItem: {
+      flexDirection: "row", 
+      alignItems: "center",
+      paddingVertical: 12,
+    },
   });
 
   const options = [
     {
-      text: "Minhas Informações",
-      icon: "account",
-    },
-    {
       text: "Pedidos",
       icon: "clipboard-list",
+      onPress: () => navigation.navigate("Orders"),
+    },
+    {
+      text: "Receitas",
+      icon: "book",
+      onPress: () => navigation.navigate("Recipes"),
     },
     {
       text: "Endereços",
@@ -52,10 +56,12 @@ export function Profile({ route }: Props) {
     {
       text: "FAQ",
       icon: "help-circle",
+      onPress: () => navigation.navigate("FAQ"),
     },
     {
       text: "Sair",
       icon: "logout",
+      onPress: () => {auth.signOut(); navigation.navigate("Login");},
     },
   ];
 
@@ -73,10 +79,15 @@ export function Profile({ route }: Props) {
             {options.map((option, index) => (
               <Card.Content
                 key={index}
-                style={{ flexDirection: "row", alignItems: "center" }}
+                style={styles.menuItem}
+                onTouchEnd={option.onPress}
               >
                 <Avatar.Icon icon={option.icon} size={24} />
-                <Card.Title title={option.text} style={{ marginLeft: 10 }} />
+                <Card.Title 
+                  title={option.text} 
+                  style={{ marginLeft: 10, width: '100%' }} 
+                  titleStyle={{ width: '100%' }}
+                />
               </Card.Content>
             ))}
           </Card>
