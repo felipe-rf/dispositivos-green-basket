@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 export function Home() {
   return (
     <View style={styles.container}>
-      <Button screen="Profile" params={{ user: "jane" }}>
+      <Button screen="Profile" params={{ user: "Cliente" }}>
         Perfil usuário
       </Button>
       <Button screen="SellerProfile" params={{ user: "john" }}>

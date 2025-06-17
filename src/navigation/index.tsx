@@ -67,16 +67,10 @@ const RootStack = createNativeStackNavigator({
             onPress={() => navigation.navigate("Cart")}
           />
           <IconButton
-            icon="package-variant"
-            iconColor="#fff"
-            size={28}
-            onPress={() => navigation.navigate("Orders")}
-          />
-          <IconButton
             icon="account-outline"
             iconColor="#fff"
             size={28}
-            onPress={() => navigation.navigate("Profile", { user: "jane" })}
+            onPress={() => navigation.navigate("Profile", { user: "Cliente" })}
           />
         </>
       );

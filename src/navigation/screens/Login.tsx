@@ -70,10 +70,10 @@ export function Login() {
         console.log("Creating new user");
         await createUserWithEmailAndPassword(auth, email, password);
         Alert.alert("Sucesso", "Conta criada com sucesso"); // Translated
-        navigation.navigate("Home");
+        navigation.navigate("Catalog");
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        navigation.navigate("Home");
+        navigation.navigate("Catalog");
       }
     } catch (error) {
       const errorMessage =
