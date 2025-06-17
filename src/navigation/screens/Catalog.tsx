@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCart } from "../../contexts/CartContext"; // Adjust path if necessary
-import { Card, FAB, Text, useTheme } from "react-native-paper";
+import { Card, Text, useTheme } from "react-native-paper";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
@@ -192,13 +192,6 @@ export function Catalog() {
           ))}
         </ScrollView>
       </View>
-
-      <FAB
-        style={styles.fab}
-        icon="filter-variant"
-        color={theme.colors.onPrimary} // Icon color is white
-        onPress={() => console.log("FAB pressed")}
-      />
     </View>
   );
 }
